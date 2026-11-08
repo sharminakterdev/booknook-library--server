@@ -1,5 +1,5 @@
 import express from"express";
-import { MongoClient } from 'mongodb';
+import { MongoClient, ObjectId } from 'mongodb';
 
 import 'dotenv/config'
 import cors from "cors"
@@ -34,6 +34,13 @@ app.post("/add-book",async(req,res)=>{
 app.get("/all-book",async(req,res)=>{
     const result=await bookCollection.find().toArray()
     res.send(result)
+})
+
+app.get('/books/:id',async(req,res)=>{
+  const {id}=req.params
+const result=await bookCollection.findOne({_id: new ObjectId(id)})
+  res.send(result)
+  
 })
 
  app.get("/",(req,res)=>{
