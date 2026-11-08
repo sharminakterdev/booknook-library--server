@@ -31,6 +31,11 @@ app.post("/add-book",async(req,res)=>{
     res.json(result)
 })
 
+app.get("/all-book",async(req,res)=>{
+    const result=await bookCollection.find().toArray()
+    res.send(result)
+})
+
  app.get("/",(req,res)=>{
     res.send({message:"server is running"})
  })
