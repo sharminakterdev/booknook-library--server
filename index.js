@@ -24,14 +24,14 @@ export async function connectToMongoDB() {
 const mongoClient=await connectToMongoDB();
 const db=mongoClient.db("booknook-library")
 const bookCollection=db.collection("add-book")
-app.post("/add-book",async(req,res)=>{
+app.post("/add-books",async(req,res)=>{
     const data=req.body
     const result=await bookCollection.insertOne(data)
   console.log(result)
     res.json(result)
 })
 
-app.get("/all-book",async(req,res)=>{
+app.get("/books",async(req,res)=>{
     const result=await bookCollection.find().toArray()
     res.send(result)
 })
@@ -42,6 +42,27 @@ const result=await bookCollection.findOne({_id: new ObjectId(id)})
   res.send(result)
   
 })
+app.get("/my-books/:email",async(req,res)=>{
+  const {email}=req.params
+  const result=await bookCollection.find({email:email}).toArray()
+  res.send(result)
+})
+
+app.patch("/books/:id", async (req, res) => {
+  const { id } = req.params;
+  const updatedData = req.body;
+
+  const result = await bookCollection.updateOne(
+    { _id: new ObjectId(id) },
+    {
+      $set: updatedData,
+    }
+  );
+
+  res.send(result);
+});
+
+
 
  app.get("/",(req,res)=>{
     res.send({message:"server is running"})
