@@ -24,6 +24,7 @@ export async function connectToMongoDB() {
 const mongoClient=await connectToMongoDB();
 const db=mongoClient.db("booknook-library")
 const bookCollection=db.collection("add-book")
+const borrowCollection = db.collection("borrows");
 app.post("/add-books",async(req,res)=>{
     const data=req.body
     const result=await bookCollection.insertOne(data)
@@ -35,6 +36,15 @@ app.get("/books",async(req,res)=>{
     const result=await bookCollection.find().toArray()
     res.send(result)
 })
+app.get("/books/latest", async (req, res) => {
+  const result = await bookCollection
+    .find()
+    .sort({ createdAt: -1 })
+    .limit(6)
+    .toArray();
+
+  res.send(result);
+});
 
 app.get('/books/:id',async(req,res)=>{
   const {id}=req.params
@@ -88,6 +98,15 @@ app.get("/borrows", async (req, res) => {
   const result = await borrowCollection
     .find({ borrowerEmail: email })
     .toArray();
+
+  res.send(result);
+});
+app.delete("/borrows/:id", async (req, res) => {
+  const { id } = req.params;
+
+  const result = await borrowCollection.deleteOne({
+    _id: new ObjectId(id),
+  });
 
   res.send(result);
 });
