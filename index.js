@@ -72,6 +72,15 @@ app.delete("/books/:id", async (req, res) => {
   res.send(result);
 });
 
+app.post("/borrows", async (req, res) => {
+  const result = await borrowCollection.insertOne({
+    ...req.body,
+    borrowDate: new Date(),
+    status: "borrowed",
+  });
+
+  res.send(result);
+});
  app.get("/",(req,res)=>{
     res.send({message:"server is running"})
  })
