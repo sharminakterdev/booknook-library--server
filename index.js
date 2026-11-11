@@ -81,6 +81,16 @@ app.post("/borrows", async (req, res) => {
 
   res.send(result);
 });
+
+app.get("/borrows", async (req, res) => {
+  const { email } = req.query;
+
+  const result = await borrowCollection
+    .find({ borrowerEmail: email })
+    .toArray();
+
+  res.send(result);
+});
  app.get("/",(req,res)=>{
     res.send({message:"server is running"})
  })
