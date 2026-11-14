@@ -80,7 +80,7 @@ console.log("Old book copies converted to numbers!");
 //   console.log(result)
 //     res.json(result)
 // })
-app.post("/add-books", async (req, res) => {
+app.post("/add-books", verifyToken, async (req, res) => {
   try {
     const data = req.body;
 
@@ -126,7 +126,7 @@ app.get("/my-books/:email",async(req,res)=>{
   res.send(result)
 })
 
-app.patch("/books/:id", async (req, res) => {
+app.patch("/books/:id",verifyToken, async (req, res) => {
   const { id } = req.params;
   const updatedData = req.body;
 
@@ -140,7 +140,7 @@ app.patch("/books/:id", async (req, res) => {
   res.send(result);
 });
 
-app.delete("/books/:id", async (req, res) => {
+app.delete("/books/:id",verifyToken, async (req, res) => {
   const { id } = req.params;
 
   const result = await bookCollection.deleteOne({
@@ -159,7 +159,7 @@ app.delete("/books/:id", async (req, res) => {
 
 //   res.send(result);
 // });
-app.post("/borrows", async (req, res) => {
+app.post("/borrows",verifyToken, async (req, res) => {
   try {
     const { bookId, borrowerEmail } = req.body;
 
@@ -228,7 +228,7 @@ app.post("/borrows", async (req, res) => {
   }
 });
 
-app.get("/borrows", async (req, res) => {
+app.get("/borrows",verifyToken, async (req, res) => {
   const { email } = req.query;
 
   const result = await borrowCollection
@@ -237,7 +237,7 @@ app.get("/borrows", async (req, res) => {
 
   res.send(result);
 });
-app.delete("/borrows/:id", async (req, res) => {
+app.delete("/borrows/:id",verifyToken, async (req, res) => {
   try {
     const { id } = req.params;
 
