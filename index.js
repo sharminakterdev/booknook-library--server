@@ -74,12 +74,7 @@ await bookCollection.updateMany(
 );
 
 console.log("Old book copies converted to numbers!");
-// app.post("/add-books",async(req,res)=>{
-//     const data=req.body
-//     const result=await bookCollection.insertOne(data)
-//   console.log(result)
-//     res.json(result)
-// })
+
 app.post("/add-books", verifyToken, async (req, res) => {
   try {
     const data = req.body;
