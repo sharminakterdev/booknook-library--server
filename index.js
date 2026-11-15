@@ -13,13 +13,23 @@ app.use(express.json())
 
 const client = new MongoClient(process.env.MONGODB_URL);
 
+// export async function connectToMongoDB() {
+//   try {
+//     await client.connect();
+//     console.log("You successfully connected to MongoDB!");
+//     return client;
+//   } catch (err) {
+//     console.dir(err);
+//   }
+// }
 export async function connectToMongoDB() {
   try {
     await client.connect();
-    console.log("You successfully connected to MongoDB!");
+    console.log("MongoDB connected successfully!");
     return client;
-  } catch (err) {
-    console.dir(err);
+  } catch (error) {
+    console.error("MongoDB Connection Error:", error);
+    throw error;
   }
 }
 const mongoClient=await connectToMongoDB();
@@ -39,8 +49,10 @@ const verifyToken= async(req,res,next)=>{
   if(!token){
     return res.status(401).send({msg:"Unauthorized!"})
   }
-const JWKS=createRemoteJWKSet(new URL("http://localhost:3000/api/auth/jwks"),
+const JWKS = createRemoteJWKSet(
+  new URL(`${process.env.CLIENT_URL}/api/auth/jwks`)
 );
+
 try{
 const {payload}=await jwtVerify(token,JWKS);
 console.log(payload)
@@ -115,7 +127,7 @@ const result=await bookCollection.findOne({_id: new ObjectId(id)})
   res.send(result)
   
 })
-app.get("/my-books/:email",async(req,res)=>{
+app.get("/my-books/:email",verifyToken ,async(req,res)=>{
   const {email}=req.params
   const result=await bookCollection.find({email:email}).toArray()
   res.send(result)
@@ -145,15 +157,7 @@ app.delete("/books/:id",verifyToken, async (req, res) => {
   res.send(result);
 });
 
-// app.post("/borrows", async (req, res) => {
-//   const result = await borrowCollection.insertOne({
-//     ...req.body,
-//     borrowDate: new Date(),
-//     status: "borrowed",
-//   });
 
-//   res.send(result);
-// });
 app.post("/borrows",verifyToken, async (req, res) => {
   try {
     const { bookId, borrowerEmail } = req.body;
@@ -291,3 +295,4 @@ app.delete("/borrows/:id",verifyToken, async (req, res) => {
 app.listen(PORT,()=>{
     console.log(    `Server is running at ${PORT}`)
 })
+export default app;
